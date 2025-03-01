@@ -33,6 +33,9 @@
 use chumsky::prelude::*;
 use std::collections::HashMap;
 
+mod break_strength;
+pub use break_strength::BreakStrength;
+
 /// Represents the entire SSML document structure.
 ///
 /// # Fields
@@ -148,6 +151,7 @@ pub struct SSML {
 ///
 /// ```rust
 /// use serde_ssml::SsmlElement;
+/// use serde_ssml::BreakStrength;
 ///
 /// // Creating a complex SSML structure demonstrating various elements
 /// let speak_element = SsmlElement::Speak {
@@ -182,7 +186,7 @@ pub struct SSML {
 ///         },
 ///         SsmlElement::Break {
 ///             time: "500ms".to_string(),
-///             strength: "medium".to_string()
+///             strength: Some(BreakStrength::Medium)
 ///         }
 ///     ]
 /// };
@@ -192,6 +196,7 @@ pub struct SSML {
 /// - This enum captures the structural and semantic richness of SSML
 /// - Not all possible SSML variations may be represented
 /// - Parsing and rendering may depend on specific text-to-speech implementations
+///
 /// Represents the various elements that can appear in a Speech Synthesis Markup Language (SSML) document.
 #[derive(Debug, PartialEq, Clone)]
 pub enum SsmlElement {
@@ -397,7 +402,7 @@ pub enum SsmlElement {
         /// - "medium"
         /// - "strong"
         /// - "x-strong"
-        strength: String,
+        strength: Option<BreakStrength>,
     },
 
     /// Provides a synchronization point for external systems.
@@ -633,13 +638,13 @@ fn ssml_parser() -> impl Parser<char, SSML, Error = Simple<char>> {
         let break_element = self_close_tag("break")
             .map(|attrs| SsmlElement::Break {
                 time: attrs.get("time").cloned().unwrap_or_default(),
-                strength: attrs.get("strength").cloned().unwrap_or_default(),
+                strength: attrs.get("strength").and_then(|s| s.parse().ok()),
             })
             .or(open_tag("break")
                 .then_ignore(close_tag("break"))
                 .map(|attrs| SsmlElement::Break {
                     time: attrs.get("time").cloned().unwrap_or_default(),
-                    strength: attrs.get("strength").cloned().unwrap_or_default(),
+                    strength: attrs.get("strength").and_then(|s| s.parse().ok()),
                 }));
 
         let mark_element = self_close_tag("mark")
@@ -865,7 +870,7 @@ mod documentation_examples {
                     },
                     SsmlElement::Break {
                         time: "500ms".to_string(),
-                        strength: "medium".to_string(),
+                        strength: Some(BreakStrength::Medium),
                     },
                 ],
             }],
