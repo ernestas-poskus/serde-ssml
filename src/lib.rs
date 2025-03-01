@@ -1,3 +1,35 @@
+//! # SSML parser
+#![deny(
+    warnings,
+    bad_style,
+    dead_code,
+    improper_ctypes,
+    non_shorthand_field_patterns,
+    no_mangle_generic_items,
+    overflowing_literals,
+    path_statements,
+    patterns_in_fns_without_body,
+    unconditional_recursion,
+    unused,
+    unused_allocation,
+    unused_comparisons,
+    unused_parens,
+    while_true,
+    missing_debug_implementations,
+    missing_docs,
+    trivial_casts,
+    trivial_numeric_casts,
+    unused_extern_crates,
+    unused_import_braces,
+    unused_qualifications,
+    unused_results,
+    unreachable_pub,
+    deprecated,
+    unknown_lints,
+    unreachable_code,
+    unused_mut
+)]
+
 use chumsky::prelude::*;
 use std::collections::HashMap;
 
@@ -126,6 +158,7 @@ fn ssml_parser() -> impl Parser<char, SSML, Error = Simple<char>> {
                 attrs_map
             })
             .then_ignore(just('>'))
+            .padded()
     };
 
     // Parser for closing tags
@@ -135,6 +168,7 @@ fn ssml_parser() -> impl Parser<char, SSML, Error = Simple<char>> {
             .ignore_then(just(name).padded())
             .then_ignore(just('>'))
             .to(())
+            .padded()
     };
 
     // Parser for self-closing tags
@@ -155,9 +189,10 @@ fn ssml_parser() -> impl Parser<char, SSML, Error = Simple<char>> {
     // Text content parser
     let text = none_of("<")
         .repeated()
-        .at_least(1) // Ensures it never produces an empty string
+        .at_least(1)
         .collect::<String>()
-        .map(|txt| SsmlElement::Text(txt.trim().to_string()));
+        .map(|txt| txt.trim().to_string())
+        .map(SsmlElement::Text);
 
     // Recursive parser for nested elements
     recursive(|element| {
@@ -313,52 +348,7 @@ fn ssml_parser() -> impl Parser<char, SSML, Error = Simple<char>> {
     .map(|elements| SSML { elements })
 }
 
-// Helper function to get the first X characters of a string
-fn preview(s: &str, max_len: usize) -> &str {
-    if s.len() <= max_len { s } else { &s[..max_len] }
-}
-
 // Public parsing function
 pub fn from_str(input: impl AsRef<str>) -> Result<SSML, Vec<Simple<char>>> {
-    let input_str = input.as_ref();
-    println!("Parsing input of length: {}", input_str.len());
-
-    // Trim any leading/trailing whitespace
-    let trimmed_input = input_str.trim();
-    println!("Trimmed input of length: {}", trimmed_input.len());
-
-    // Print the first 100 chars to debug
-    if !trimmed_input.is_empty() {
-        println!("Input preview: '{}'", preview(trimmed_input, 100));
-    }
-
-    // Parse the trimmed input
-    let result = ssml_parser().parse(trimmed_input);
-
-    match &result {
-        Ok(ssml) => {
-            println!(
-                "Successfully parsed SSML with {} top-level elements",
-                ssml.elements.len()
-            );
-        }
-        Err(errors) => {
-            println!("Failed to parse with {} errors", errors.len());
-            for (i, error) in errors.iter().enumerate() {
-                println!("Error {}: {}", i + 1, error);
-
-                // Debug the error location
-                let span = error.span();
-                let error_location = &trimmed_input[span.clone()];
-                let context_start = if span.start > 20 { span.start - 20 } else { 0 };
-                let context_end = std::cmp::min(span.end + 20, trimmed_input.len());
-                let context = &trimmed_input[context_start..context_end];
-
-                println!("Error location: '{}'", error_location);
-                println!("Context: '{}'", context);
-            }
-        }
-    }
-
-    result
+    ssml_parser().parse(input.as_ref())
 }

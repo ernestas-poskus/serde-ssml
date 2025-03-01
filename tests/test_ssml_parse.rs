@@ -34,14 +34,6 @@ fn test_simplified_ssml() {
     assert!(parsed.is_ok(), "Failed to parse simplified SSML");
 
     if let Ok(ssml) = parsed {
-        println!(
-            "Successfully parsed with {} top-level elements",
-            ssml.elements.len()
-        );
-
-        // Print the structure to debug
-        println!("{:#?}", ssml);
-
         assert_eq!(
             ssml.elements.len(),
             1,
@@ -70,13 +62,7 @@ fn test_debug_parser() {
     let parsed = from_str(input);
 
     match &parsed {
-        Ok(ssml) => {
-            println!(
-                "Successfully parsed with {} top-level elements",
-                ssml.elements.len()
-            );
-            println!("{:#?}", ssml);
-        }
+        Ok(_ssml) => {}
         Err(errors) => {
             for (i, error) in errors.iter().enumerate() {
                 println!("Error {}: {}", i + 1, error);
@@ -94,7 +80,6 @@ fn test_simple_text() {
     assert!(parsed.is_ok());
 
     if let Ok(ssml) = parsed {
-        println!("{:#?}", ssml);
         assert_eq!(ssml.elements.len(), 1);
 
         if let SsmlElement::Speak { children, .. } = &ssml.elements[0] {
@@ -113,7 +98,6 @@ fn test_nested_elements() {
     assert!(parsed.is_ok());
 
     if let Ok(ssml) = parsed {
-        println!("{:#?}", ssml);
         assert_eq!(ssml.elements.len(), 1);
 
         if let SsmlElement::Speak { children, .. } = &ssml.elements[0] {
@@ -133,7 +117,6 @@ fn test_self_closing() {
     assert!(parsed.is_ok());
 
     if let Ok(ssml) = parsed {
-        println!("{:#?}", ssml);
         assert_eq!(ssml.elements.len(), 1);
 
         if let SsmlElement::Speak { children, .. } = &ssml.elements[0] {
@@ -159,13 +142,7 @@ fn test_comprehensive_ssml() {
 
     // Debug output
     match &parsed {
-        Ok(ssml) => {
-            println!(
-                "Successfully parsed comprehensive SSML with {} top-level elements",
-                ssml.elements.len()
-            );
-            println!("{:#?}", ssml);
-        }
+        Ok(_ssml) => {}
         Err(errors) => {
             for (i, error) in errors.iter().enumerate() {
                 println!("Error {}: {}", i + 1, error);
@@ -557,10 +534,7 @@ fn test_comprehensive_ssml2() {
     let parsed = from_str(input);
 
     match &parsed {
-        Ok(ssml) => println!(
-            "Successfully parsed comprehensive SSML with {} top-level elements",
-            ssml.elements.len()
-        ),
+        Ok(_ssml) => {}
         Err(errors) => {
             for (i, error) in errors.iter().enumerate() {
                 println!("Error {}: {}", i + 1, error);
@@ -571,8 +545,6 @@ fn test_comprehensive_ssml2() {
     assert!(parsed.is_ok(), "Failed to parse comprehensive SSML");
 
     if let Ok(ssml) = parsed {
-        println!("{:#?}", ssml);
-
         // We should have one Speak element at the top level
         assert_eq!(
             ssml.elements.len(),
@@ -608,8 +580,6 @@ fn test_comprehensive_ssml2() {
                 .iter()
                 .any(|child| matches!(child, SsmlElement::Voice { .. }));
             assert!(has_voice, "No voice element found");
-
-            println!("Children {:#?}", children);
 
             // Check for the presence of a break element
             let has_break = children
@@ -664,13 +634,10 @@ fn test_comprehensive_ssml2() {
 
             match breaks[1] {
                 SsmlElement::Paragraph { children } => {
-                    println!("Children {:#?}", children);
                     assert_eq!(children.len(), 8);
                 }
                 _ => panic!("Expected paragraph element with breaks"),
             }
-
-            println!("Breaks: {:#?}", breaks);
         } else {
             panic!("Top level element is not a Speak element");
         }
@@ -702,22 +669,11 @@ fn test_comprehensive_ssml_debug() {
     <lexicon uri="https://example.com/lexicon.pls"/>
 </speak>"#;
 
-    println!("\n\n=== Starting comprehensive SSML parsing ===");
     let parsed = from_str(input);
 
     match &parsed {
-        Ok(ssml) => {
-            println!(
-                "Successfully parsed with {} top-level elements",
-                ssml.elements.len()
-            );
-            println!("{:#?}", ssml);
-        }
+        Ok(_ssml) => {}
         Err(errors) => {
-            println!(
-                "Failed to parse comprehensive SSML with {} errors:",
-                errors.len()
-            );
             for (i, error) in errors.iter().enumerate() {
                 println!("Error {}: {}", i + 1, error);
             }
@@ -734,40 +690,27 @@ fn test_comprehensive_ssml_debug() {
             "Expected exactly one top-level element"
         );
 
-        if let SsmlElement::Speak {
-            version,
-            lang,
-            children,
-            ..
-        } = &ssml.elements[0]
-        {
-            println!(
-                "Speak element attributes - version: {}, lang: {}",
-                version, lang
-            );
-            println!("Speak element has {} children", children.len());
-
-            // Print details of each child element
-            for (i, child) in children.iter().enumerate() {
-                match child {
-                    SsmlElement::Voice { name, .. } => {
-                        println!("Child {}: Voice with name '{}'", i, name)
-                    }
-                    SsmlElement::Paragraph { .. } => println!("Child {}: Paragraph", i),
-                    SsmlElement::Phoneme { alphabet, ph, .. } => println!(
-                        "Child {}: Phoneme with alphabet '{}' and ph '{}'",
-                        i, alphabet, ph
-                    ),
-                    SsmlElement::Text(text) => {
-                        if text.trim().is_empty() {
-                            println!("Child {}: Empty text (whitespace)", i);
-                        } else {
-                            println!("Child {}: Text '{}'", i, text.trim());
-                        }
-                    }
-                    _ => println!("Child {}: {:?}", i, child),
-                }
-            }
+        if let SsmlElement::Speak { .. } = &ssml.elements[0] {
+            // for (i, child) in children.iter().enumerate() {
+            //     match child {
+            //         SsmlElement::Voice { name, .. } => {
+            //             println!("Child {}: Voice with name '{}'", i, name)
+            //         }
+            //         SsmlElement::Paragraph { .. } => println!("Child {}: Paragraph", i),
+            //         SsmlElement::Phoneme { alphabet, ph, .. } => println!(
+            //             "Child {}: Phoneme with alphabet '{}' and ph '{}'",
+            //             i, alphabet, ph
+            //         ),
+            //         SsmlElement::Text(text) => {
+            //             if text.trim().is_empty() {
+            //                 println!("Child {}: Empty text (whitespace)", i);
+            //             } else {
+            //                 println!("Child {}: Text '{}'", i, text.trim());
+            //             }
+            //         }
+            //         _ => println!("Child {}: {:?}", i, child),
+            //     }
+            // }
         } else {
             panic!("Top level element is not a Speak element");
         }
@@ -779,17 +722,10 @@ fn test_comprehensive_ssml_debug() {
 fn test_minimal_document() {
     let input = "<speak><p>Simple test</p></speak>";
 
-    println!("\n\n=== Starting minimal document parsing ===");
     let parsed = from_str(input);
 
     match &parsed {
-        Ok(ssml) => {
-            println!(
-                "Successfully parsed with {} top-level elements",
-                ssml.elements.len()
-            );
-            println!("{:#?}", ssml);
-        }
+        Ok(_ssml) => {}
         Err(errors) => {
             println!(
                 "Failed to parse minimal document with {} errors:",
@@ -814,17 +750,10 @@ fn test_document_with_text_outside_elements() {
     Text after element
 </speak>"#;
 
-    println!("\n\n=== Starting document with text outside elements parsing ===");
     let parsed = from_str(input);
 
     match &parsed {
-        Ok(ssml) => {
-            println!(
-                "Successfully parsed with {} top-level elements",
-                ssml.elements.len()
-            );
-            println!("{:#?}", ssml);
-        }
+        Ok(_ssml) => {}
         Err(errors) => {
             println!(
                 "Failed to parse document with text outside elements with {} errors:",
@@ -872,7 +801,6 @@ fn test_progressive_diagnosis() {
     // Start with the most basic test
     let simple_input = r#"<speak>Hello</speak>"#;
 
-    println!("\n\n=== Testing very simple SSML ===");
     let parsed_simple = from_str(simple_input);
     assert!(
         parsed_simple.is_ok(),
@@ -882,7 +810,6 @@ fn test_progressive_diagnosis() {
     // Add a version attribute
     let version_input = r#"<speak version="1.1">Hello</speak>"#;
 
-    println!("\n\n=== Testing with version attribute ===");
     let parsed_version = from_str(version_input);
     assert!(
         parsed_version.is_ok(),
@@ -892,7 +819,6 @@ fn test_progressive_diagnosis() {
     // Add xml:lang attribute
     let lang_input = r#"<speak version="1.1" xml:lang="en-US">Hello</speak>"#;
 
-    println!("\n\n=== Testing with xml:lang attribute ===");
     let parsed_lang = from_str(lang_input);
     assert!(
         parsed_lang.is_ok(),
@@ -900,7 +826,6 @@ fn test_progressive_diagnosis() {
     );
     if let Ok(ssml) = parsed_lang {
         if let Some(SsmlElement::Speak { version, lang, .. }) = ssml.elements.first() {
-            println!("Successfully parsed - version: {}, lang: {}", version, lang);
             assert_eq!(version, "1.1", "Version attribute not correctly parsed");
             assert_eq!(lang, "en-US", "xml:lang attribute not correctly parsed");
         } else {
@@ -911,7 +836,6 @@ fn test_progressive_diagnosis() {
     // Add xmlns attribute
     let xmlns_input = r#"<speak version="1.1" xml:lang="en-US" xmlns="http://www.w3.org/2001/10/synthesis">Hello</speak>"#;
 
-    println!("\n\n=== Testing with xmlns attribute ===");
     let parsed_xmlns = from_str(xmlns_input);
     assert!(
         parsed_xmlns.is_ok(),
@@ -924,7 +848,6 @@ fn test_progressive_diagnosis() {
        xmlns="http://www.w3.org/2001/10/synthesis"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Hello</speak>"#;
 
-    println!("\n\n=== Testing with xmlns:xsi attribute ===");
     let parsed_xmlns_xsi = from_str(xmlns_xsi_input);
     assert!(
         parsed_xmlns_xsi.is_ok(),
@@ -938,7 +861,6 @@ fn test_progressive_diagnosis() {
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd">Hello</speak>"#;
 
-    println!("\n\n=== Testing with schemaLocation attribute ===");
     let parsed_schema = from_str(schema_input);
     assert!(
         parsed_schema.is_ok(),
@@ -952,14 +874,11 @@ fn test_progressive_diagnosis() {
     </p>
 </speak>"#;
 
-    println!("\n\n=== Testing with nested elements ===");
     let parsed_nested = from_str(nested_input);
     assert!(
         parsed_nested.is_ok(),
         "Failed to parse SSML with nested elements"
     );
-
-    println!("\n\nAll progressive tests passed!");
 }
 
 #[test]
@@ -967,14 +886,11 @@ fn test_specific_xml_attribute() {
     // Test specifically handling xml: namespaced attributes
     let input = r#"<speak xml:lang="en-US">Hello</speak>"#;
 
-    println!("\n\n=== Testing xml: attribute specifically ===");
     let result = from_str(input);
 
     match &result {
         Ok(ssml) => {
-            println!("Successfully parsed SSML with xml attribute");
             if let Some(SsmlElement::Speak { lang, .. }) = ssml.elements.first() {
-                println!("xml:lang attribute value: '{}'", lang);
                 assert_eq!(lang, "en-US", "xml:lang attribute not correctly parsed");
             }
         }
@@ -990,15 +906,12 @@ fn test_specific_xml_attribute() {
 #[test]
 fn test_simple_speak_element() {
     // Test for the most basic speak element parsing
-    println!("\n\n=== Testing basic Speak element parsing ===");
     let input = "<speak>Test</speak>";
 
     let result = from_str(input);
 
     match &result {
         Ok(ssml) => {
-            println!("Successfully parsed basic speak element");
-            println!("{:#?}", ssml);
             assert_eq!(ssml.elements.len(), 1, "Should have exactly one element");
         }
         Err(errors) => {
