@@ -267,12 +267,13 @@ fn test_complex_ssml() {
             children,
         } = &ssml.elements[0]
         {
-            assert_eq!(version, "1.1", "Wrong version attribute");
+            assert_eq!(version.as_deref(), Some("1.1"), "Wrong version attribute");
             assert_eq!(
-                xmlns, "http://www.w3.org/2001/10/synthesis",
+                xmlns.as_deref(),
+                Some("http://www.w3.org/2001/10/synthesis"),
                 "Wrong xmlns attribute"
             );
-            assert_eq!(lang, "en-US", "Wrong xml:lang attribute");
+            assert_eq!(lang.as_deref(), Some("en-US"), "Wrong xml:lang attribute");
 
             // Count significant elements (paragraph and voice), ignoring whitespace
             let significant_elements: Vec<_> = children
@@ -559,12 +560,13 @@ fn test_comprehensive_ssml2() {
             children,
         } = &ssml.elements[0]
         {
-            assert_eq!(version, "1.1", "Wrong version attribute");
+            assert_eq!(version.as_deref(), Some("1.1"), "Wrong version attribute");
             assert_eq!(
-                xmlns, "http://www.w3.org/2001/10/synthesis",
+                xmlns.as_deref(),
+                Some("http://www.w3.org/2001/10/synthesis"),
                 "Wrong xmlns attribute"
             );
-            assert_eq!(lang, "en-US", "Wrong xml:lang attribute");
+            assert_eq!(lang.as_deref(), Some("en-US"), "Wrong xml:lang attribute");
 
             // Check for expected number of children (should be many based on the input)
             assert!(children.len() > 10, "Expected many child elements in speak");
@@ -826,8 +828,16 @@ fn test_progressive_diagnosis() {
     );
     if let Ok(ssml) = parsed_lang {
         if let Some(SsmlElement::Speak { version, lang, .. }) = ssml.elements.first() {
-            assert_eq!(version, "1.1", "Version attribute not correctly parsed");
-            assert_eq!(lang, "en-US", "xml:lang attribute not correctly parsed");
+            assert_eq!(
+                version.as_deref(),
+                Some("1.1"),
+                "Version attribute not correctly parsed"
+            );
+            assert_eq!(
+                lang.as_deref(),
+                Some("en-US"),
+                "xml:lang attribute not correctly parsed"
+            );
         } else {
             panic!("Expected Speak element not found");
         }
@@ -891,7 +901,11 @@ fn test_specific_xml_attribute() {
     match &result {
         Ok(ssml) => {
             if let Some(SsmlElement::Speak { lang, .. }) = ssml.elements.first() {
-                assert_eq!(lang, "en-US", "xml:lang attribute not correctly parsed");
+                assert_eq!(
+                    lang.as_deref(),
+                    Some("en-US"),
+                    "xml:lang attribute not correctly parsed"
+                );
             }
         }
         Err(errors) => {
@@ -954,8 +968,8 @@ fn test_comprehensive_ssml_relaxed() {
         } = &ssml.elements[0]
         {
             // Verify basic attributes
-            assert_eq!(version, "1.1");
-            assert_eq!(lang, "en-US");
+            assert_eq!(version.as_deref(), Some("1.1"));
+            assert_eq!(lang.as_deref(), Some("en-US"));
 
             // Don't test exact child count or structure - just verify we have some children
             assert!(!children.is_empty(), "Speak element should have children");
