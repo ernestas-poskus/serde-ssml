@@ -535,7 +535,13 @@ fn test_comprehensive_ssml2() {
     let parsed = from_str(input);
 
     match &parsed {
-        Ok(_ssml) => {}
+        Ok(ssml) => {
+            let output2 = serde_ssml::to_string(ssml);
+
+            let parsed2 = from_str(output2);
+
+            similar_asserts::assert_eq!(parsed, parsed2);
+        }
         Err(errors) => {
             for (i, error) in errors.iter().enumerate() {
                 println!("Error {}: {}", i + 1, error);
@@ -674,7 +680,13 @@ fn test_comprehensive_ssml_debug() {
     let parsed = from_str(input);
 
     match &parsed {
-        Ok(_ssml) => {}
+        Ok(ssml) => {
+            let output2 = serde_ssml::to_string(ssml);
+
+            let parsed2 = from_str(output2);
+
+            similar_asserts::assert_eq!(parsed, parsed2);
+        }
         Err(errors) => {
             for (i, error) in errors.iter().enumerate() {
                 println!("Error {}: {}", i + 1, error);

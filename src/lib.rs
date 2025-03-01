@@ -35,6 +35,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 mod break_strength;
+mod ser;
 pub use break_strength::BreakStrength;
 
 /// Represents the entire SSML document structure.
@@ -62,7 +63,7 @@ pub use break_strength::BreakStrength;
 ///     ]
 /// };
 /// ```
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct SSML {
     /// Top-level SSML elements
     pub elements: Vec<SsmlElement>,
@@ -786,6 +787,11 @@ fn ssml_parser() -> impl Parser<char, SSML, Error = Simple<char>> {
 /// - Parsing is based on structural recognition, not semantic validation
 pub fn from_str(input: impl AsRef<str>) -> Result<SSML, Vec<Simple<char>>> {
     ssml_parser().parse(input.as_ref())
+}
+
+/// Converts a structured SSML representation into a serialized SSML string.
+pub fn to_string(ssml: &SSML) -> String {
+    ser::to_ssml(ssml)
 }
 
 // Example usage and demonstration module

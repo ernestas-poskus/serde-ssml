@@ -8,7 +8,6 @@ fn test_serialize_voice() {
     };
 
     let json = serde_json::to_string(&voice).unwrap();
-    println!("Serialized JSON: {}", json);
 
     let deserialized: SsmlElement = serde_json::from_str(&json).unwrap();
     assert_eq!(voice, deserialized);
@@ -28,7 +27,6 @@ fn test_serialize_speak() {
     };
 
     let json = serde_json::to_string(&speak).unwrap();
-    println!("Serialized JSON: {}", json);
 
     let deserialized: SsmlElement = serde_json::from_str(&json).unwrap();
     assert_eq!(speak, deserialized);
@@ -64,7 +62,6 @@ fn test_serialize_complex_ssml() {
     };
 
     let json = serde_json::to_string(&complex_ssml).unwrap();
-    println!("Serialized JSON: {}", json);
 
     let deserialized: SsmlElement = serde_json::from_str(&json).unwrap();
     assert_eq!(complex_ssml, deserialized);
