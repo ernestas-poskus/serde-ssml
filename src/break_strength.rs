@@ -14,7 +14,7 @@ use serde::{Deserialize, Serialize};
 /// let break_strength = BreakStrength::Medium;
 /// let ssml_representation = break_strength.to_string(); // "medium"
 /// ```
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[non_exhaustive]
 pub enum BreakStrength {
     /// No pause or break between words.

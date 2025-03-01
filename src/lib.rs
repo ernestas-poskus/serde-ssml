@@ -31,6 +31,7 @@
 )]
 
 use chumsky::prelude::*;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 mod break_strength;
@@ -61,7 +62,7 @@ pub use break_strength::BreakStrength;
 ///     ]
 /// };
 /// ```
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SSML {
     /// Top-level SSML elements
     pub elements: Vec<SsmlElement>,
@@ -198,7 +199,8 @@ pub struct SSML {
 /// - Parsing and rendering may depend on specific text-to-speech implementations
 ///
 /// Represents the various elements that can appear in a Speech Synthesis Markup Language (SSML) document.
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(tag = "type", content = "data")]
 pub enum SsmlElement {
     // Core structural elements
     /// Specifies a specific voice characteristics for a section of text.
