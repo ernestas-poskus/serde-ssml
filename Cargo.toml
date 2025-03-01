@@ -2,6 +2,16 @@
 name = "serde_ssml"
 version = "0.1.0"
 edition = "2024"
+authors = ["Ernestas Poskus @ernestas-poskus"]
+description = "A robust Rust library for parsing, manipulating, and generating Speech Synthesis Markup Language (SSML) documents."
+readme = "README.md"
+
+homepage = "https://github.com/ernestas-poskus/serde-ssml"
+repository = "https://github.com/ernestas-poskus/serde-ssml"
+license = "MIT"
+documentation = "https://docs.rs/serde_ssml"
+keywords = ["ssml", "speech", "xml", "parsing", "text-to-speech"]
+categories = ["parsing", "text-processing", "development-tools"]
 
 [dependencies]
 chumsky = { version = "0.9.3" }
