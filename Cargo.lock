@@ -157,16 +157,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "serde-ssml"
-version = "0.1.0"
-dependencies = [
- "chumsky",
- "serde",
- "serde_json",
- "similar-asserts",
-]
-
-[[package]]
 name = "serde_derive"
 version = "1.0.218"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -187,6 +177,16 @@ dependencies = [
  "memchr",
  "ryu",
  "serde",
+]
+
+[[package]]
+name = "serde_ssml"
+version = "0.1.0"
+dependencies = [
+ "chumsky",
+ "serde",
+ "serde_json",
+ "similar-asserts",
 ]
 
 [[package]]
