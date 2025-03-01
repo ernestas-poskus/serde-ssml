@@ -5,10 +5,10 @@
 [![Documentation][docs-badge]][docs-url]
 [![MIT licensed][mit-badge]][mit-url]
 
-[crates-badge]: https://img.shields.io/crates/v/ssml_parser.svg
-[crates-url]: https://crates.io/crates/ssml_parser
-[docs-badge]: https://docs.rs/ssml_parser/badge.svg
-[docs-url]: https://docs.rs/ssml_parser
+[crates-badge]: https://img.shields.io/crates/v/serde-ssml.svg
+[crates-url]: https://crates.io/crates/serde-ssml
+[docs-badge]: https://docs.rs/serde-ssml/badge.svg
+[docs-url]: https://docs.rs/serde-ssml
 [mit-badge]: https://img.shields.io/badge/license-mit.svg
 [mit-url]: LICENSE
 
