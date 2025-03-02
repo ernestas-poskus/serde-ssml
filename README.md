@@ -28,7 +28,7 @@ Add to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-serde_ssml = "0.1"  # Replace with actual version
+serde_ssml = "0.3"  # Replace with actual version
 ```
 
 ## Quick Start
@@ -68,6 +68,7 @@ fn main() {
 
 ```rust
 use serde_ssml::{SsmlElement, SSML, BreakStrength};
+use std::time::Duration;
 
 fn main() {
     let ssml = SSML {
@@ -103,7 +104,7 @@ fn main() {
                         ]
                     },
                     SsmlElement::Break {
-                        time: "500ms".to_string(),
+                        time: Some(Duration::from_millis(500)),
                         strength: Some(BreakStrength::Medium)
                     }
                 ]
@@ -111,8 +112,8 @@ fn main() {
         ]
     };
 
-    // Convert back to XML
-    let xml_output = ssml.to_xml();
+    // Convert back to SSML
+    let xml_output = serde_ssml::to_string(&ssml);
     println!("{}", xml_output);
 }
 ```
@@ -129,7 +130,7 @@ fn main() {
     let parsed_ssml = from_str(ssml_input).expect("Failed to parse");
 
     // Convert back to XML string
-    let xml_output = to_string(&parsed_ssml).expect("Failed to serialize");
+    let xml_output = to_string(&parsed_ssml);
     println!("{}", xml_output);
 }
 ```

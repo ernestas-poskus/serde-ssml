@@ -1,4 +1,5 @@
 //! # SSML Parser Library
+#![doc = include_str!("../README.md")]
 #![deny(
     warnings,
     bad_style,

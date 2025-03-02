@@ -4,7 +4,6 @@ version = "0.3.0"
 edition = "2024"
 authors = ["Ernestas Poskus @ernestas-poskus"]
 description = "A robust Rust library for parsing, manipulating, and generating Speech Synthesis Markup Language (SSML) documents."
-readme = "README.md"
 
 homepage = "https://github.com/ernestas-poskus/serde-ssml"
 repository = "https://github.com/ernestas-poskus/serde-ssml"
