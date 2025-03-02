@@ -113,8 +113,8 @@ fn main() {
     };
 
     // Convert back to SSML
-    let xml_output = serde_ssml::to_string(&ssml);
-    println!("{}", xml_output);
+    let output = serde_ssml::to_string(&ssml);
+    println!("{}", output);
 }
 ```
 
@@ -130,8 +130,8 @@ fn main() {
     let parsed_ssml = from_str(ssml_input).expect("Failed to parse");
 
     // Convert back to XML string
-    let xml_output = to_string(&parsed_ssml);
-    println!("{}", xml_output);
+    let output = to_string(&parsed_ssml);
+    println!("{}", output);
 }
 ```
 

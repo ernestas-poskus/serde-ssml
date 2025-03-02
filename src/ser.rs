@@ -14,15 +14,6 @@ pub(crate) fn to_ssml(ssml: &SSML) -> String {
 }
 
 fn to_ssml_element(element: &SsmlElement) -> String {
-    // Helper function to escape XML special characters
-    let escape = |text: &str| -> String {
-        text.replace('&', "&amp;")
-            .replace('<', "&lt;")
-            .replace('>', "&gt;")
-            .replace('"', "&quot;")
-        // .replace('\'', "&apos;")
-    };
-
     match element {
         SsmlElement::Speak {
             version,
@@ -32,13 +23,13 @@ fn to_ssml_element(element: &SsmlElement) -> String {
         } => {
             let mut attrs = Vec::new();
             if let Some(v) = version {
-                attrs.push(format!("version=\"{}\"", escape(v)));
+                attrs.push(format!("version=\"{}\"", v));
             }
             if let Some(x) = xmlns {
-                attrs.push(format!("xmlns=\"{}\"", escape(x)));
+                attrs.push(format!("xmlns=\"{}\"", x));
             }
             if let Some(l) = lang {
-                attrs.push(format!("xml:lang=\"{}\"", escape(l)));
+                attrs.push(format!("xml:lang=\"{}\"", l));
             }
 
             let attr_str = if attrs.is_empty() {
@@ -55,7 +46,7 @@ fn to_ssml_element(element: &SsmlElement) -> String {
             let name_attr = if name.is_empty() {
                 String::new()
             } else {
-                format!(" name=\"{}\"", escape(name))
+                format!(" name=\"{}\"", name)
             };
 
             let child_content: String = children.iter().map(to_ssml_element).collect();
@@ -79,10 +70,10 @@ fn to_ssml_element(element: &SsmlElement) -> String {
         } => {
             let mut attrs = Vec::new();
             if !alphabet.is_empty() {
-                attrs.push(format!("alphabet=\"{}\"", escape(alphabet)));
+                attrs.push(format!("alphabet=\"{}\"", alphabet));
             }
             if !ph.is_empty() {
-                attrs.push(format!("ph=\"{}\"", escape(ph)));
+                attrs.push(format!("ph=\"{}\"", ph));
             }
 
             let attr_str = if attrs.is_empty() {
@@ -103,13 +94,13 @@ fn to_ssml_element(element: &SsmlElement) -> String {
         } => {
             let mut attrs = Vec::new();
             if !interpret_as.is_empty() {
-                attrs.push(format!("interpret-as=\"{}\"", escape(interpret_as)));
+                attrs.push(format!("interpret-as=\"{}\"", interpret_as));
             }
             if !format.is_empty() {
-                attrs.push(format!("format=\"{}\"", escape(format)));
+                attrs.push(format!("format=\"{}\"", format));
             }
             if !detail.is_empty() {
-                attrs.push(format!("detail=\"{}\"", escape(detail)));
+                attrs.push(format!("detail=\"{}\"", detail));
             }
 
             let attr_str = if attrs.is_empty() {
@@ -126,7 +117,7 @@ fn to_ssml_element(element: &SsmlElement) -> String {
             let alias_attr = if alias.is_empty() {
                 String::new()
             } else {
-                format!(" alias=\"{}\"", escape(alias))
+                format!(" alias=\"{}\"", alias)
             };
 
             let child_content: String = children.iter().map(to_ssml_element).collect();
@@ -143,19 +134,19 @@ fn to_ssml_element(element: &SsmlElement) -> String {
         } => {
             let mut attrs = Vec::new();
             if !rate.is_empty() {
-                attrs.push(format!("rate=\"{}\"", escape(rate)));
+                attrs.push(format!("rate=\"{}\"", rate));
             }
             if !pitch.is_empty() {
-                attrs.push(format!("pitch=\"{}\"", escape(pitch)));
+                attrs.push(format!("pitch=\"{}\"", pitch));
             }
             if !contour.is_empty() {
-                attrs.push(format!("contour=\"{}\"", escape(contour)));
+                attrs.push(format!("contour=\"{}\"", contour));
             }
             if !range.is_empty() {
-                attrs.push(format!("range=\"{}\"", escape(range)));
+                attrs.push(format!("range=\"{}\"", range));
             }
             if !volume.is_empty() {
-                attrs.push(format!("volume=\"{}\"", escape(volume)));
+                attrs.push(format!("volume=\"{}\"", volume));
             }
 
             let attr_str = if attrs.is_empty() {
@@ -172,7 +163,7 @@ fn to_ssml_element(element: &SsmlElement) -> String {
             let level_attr = if level.is_empty() {
                 String::new()
             } else {
-                format!(" level=\"{}\"", escape(level))
+                format!(" level=\"{}\"", level)
             };
 
             let child_content: String = children.iter().map(to_ssml_element).collect();
@@ -185,7 +176,7 @@ fn to_ssml_element(element: &SsmlElement) -> String {
                 attrs.push(format!("time=\"{}ms\"", time.as_millis()));
             }
             if let Some(s) = strength {
-                attrs.push(format!("strength=\"{}\"", escape(&s.to_string())));
+                attrs.push(format!("strength=\"{}\"", &s.to_string()));
             }
 
             let attr_str = if attrs.is_empty() {
@@ -197,12 +188,12 @@ fn to_ssml_element(element: &SsmlElement) -> String {
             format!("<break{}/>", attr_str)
         }
         SsmlElement::Mark { name } => {
-            format!("<mark name=\"{}\"/>", escape(name))
+            format!("<mark name=\"{}\"/>", name)
         }
         SsmlElement::Audio { src, children } => {
             let child_content: String = children.iter().map(to_ssml_element).collect();
 
-            format!("<audio src=\"{}\">{}</audio>", escape(src), child_content,)
+            format!("<audio src=\"{}\">{}</audio>", src, child_content)
         }
         SsmlElement::Desc { children } => {
             let child_content: String = children.iter().map(to_ssml_element).collect();
@@ -210,17 +201,13 @@ fn to_ssml_element(element: &SsmlElement) -> String {
             format!("<desc>{}</desc>", child_content)
         }
         SsmlElement::LexiconUri { uri } => {
-            format!("<lexicon uri=\"{}\"/>", escape(uri))
+            format!("<lexicon uri=\"{}\"/>", uri)
         }
         SsmlElement::Lang { xml_lang, children } => {
             let child_content: String = children.iter().map(to_ssml_element).collect();
 
-            format!(
-                "<lang xml:lang=\"{}\">{}</lang>",
-                escape(xml_lang),
-                child_content,
-            )
+            format!("<lang xml:lang=\"{}\">{}</lang>", xml_lang, child_content,)
         }
-        SsmlElement::Text(text) => escape(text),
+        SsmlElement::Text(text) => text.to_owned(),
     }
 }
