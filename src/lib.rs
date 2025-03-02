@@ -64,7 +64,7 @@ pub use break_strength::BreakStrength;
 ///     ]
 /// };
 /// ```
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub struct SSML {
     /// Top-level SSML elements
     pub elements: Vec<SsmlElement>,
