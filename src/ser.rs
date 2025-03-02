@@ -7,15 +7,13 @@ pub(crate) fn to_ssml(ssml: &SSML) -> String {
 
     // Add all top-level elements
     for element in ssml.elements.iter() {
-        output.push_str(&to_ssml_element(element, 0));
+        output.push_str(&to_ssml_element(element));
     }
 
     output
 }
 
-fn to_ssml_element(element: &SsmlElement, indent: usize) -> String {
-    let spaces = " ".repeat(indent);
-
+fn to_ssml_element(element: &SsmlElement) -> String {
     // Helper function to escape XML special characters
     let escape = |text: &str| -> String {
         text.replace('&', "&amp;")
@@ -49,15 +47,9 @@ fn to_ssml_element(element: &SsmlElement, indent: usize) -> String {
                 format!(" {}", attrs.join(" "))
             };
 
-            let child_content: String = children
-                .iter()
-                .map(|child| to_ssml_element(child, indent + 2))
-                .collect();
+            let child_content: String = children.iter().map(to_ssml_element).collect();
 
-            format!(
-                "{}<speak{}>\n{}{}</speak>\n",
-                spaces, attr_str, child_content, spaces
-            )
+            format!("<speak{}>{}</speak>", attr_str, child_content)
         }
         SsmlElement::Voice { name, children } => {
             let name_attr = if name.is_empty() {
@@ -66,31 +58,19 @@ fn to_ssml_element(element: &SsmlElement, indent: usize) -> String {
                 format!(" name=\"{}\"", escape(name))
             };
 
-            let child_content: String = children
-                .iter()
-                .map(|child| to_ssml_element(child, indent + 2))
-                .collect();
+            let child_content: String = children.iter().map(to_ssml_element).collect();
 
-            format!(
-                "{}<voice{}>\n{}{}</voice>\n",
-                spaces, name_attr, child_content, spaces
-            )
+            format!("<voice{}>{}</voice>", name_attr, child_content)
         }
         SsmlElement::Paragraph { children } => {
-            let child_content: String = children
-                .iter()
-                .map(|child| to_ssml_element(child, indent + 2))
-                .collect();
+            let child_content: String = children.iter().map(to_ssml_element).collect();
 
-            format!("{}<p>\n{}{}</p>\n", spaces, child_content, spaces)
+            format!("<p>{}</p>", child_content)
         }
         SsmlElement::Sentence { children } => {
-            let child_content: String = children
-                .iter()
-                .map(|child| to_ssml_element(child, indent + 2))
-                .collect();
+            let child_content: String = children.iter().map(to_ssml_element).collect();
 
-            format!("{}<s>\n{}{}</s>\n", spaces, child_content, spaces)
+            format!("<s>{}</s>", child_content)
         }
         SsmlElement::Phoneme {
             alphabet,
@@ -111,15 +91,9 @@ fn to_ssml_element(element: &SsmlElement, indent: usize) -> String {
                 format!(" {}", attrs.join(" "))
             };
 
-            let child_content: String = children
-                .iter()
-                .map(|child| to_ssml_element(child, indent + 2))
-                .collect();
+            let child_content: String = children.iter().map(to_ssml_element).collect();
 
-            format!(
-                "{}<phoneme{}>\n{}{}</phoneme>\n",
-                spaces, attr_str, child_content, spaces
-            )
+            format!("<phoneme{}>{}</phoneme>", attr_str, child_content)
         }
         SsmlElement::SayAs {
             interpret_as,
@@ -144,15 +118,9 @@ fn to_ssml_element(element: &SsmlElement, indent: usize) -> String {
                 format!(" {}", attrs.join(" "))
             };
 
-            let child_content: String = children
-                .iter()
-                .map(|child| to_ssml_element(child, indent + 2))
-                .collect();
+            let child_content: String = children.iter().map(to_ssml_element).collect();
 
-            format!(
-                "{}<say-as{}>\n{}{}</say-as>\n",
-                spaces, attr_str, child_content, spaces
-            )
+            format!("<say-as{}>{}</say-as>", attr_str, child_content)
         }
         SsmlElement::Sub { alias, children } => {
             let alias_attr = if alias.is_empty() {
@@ -161,15 +129,9 @@ fn to_ssml_element(element: &SsmlElement, indent: usize) -> String {
                 format!(" alias=\"{}\"", escape(alias))
             };
 
-            let child_content: String = children
-                .iter()
-                .map(|child| to_ssml_element(child, indent + 2))
-                .collect();
+            let child_content: String = children.iter().map(to_ssml_element).collect();
 
-            format!(
-                "{}<sub{}>\n{}{}</sub>\n",
-                spaces, alias_attr, child_content, spaces
-            )
+            format!("<sub{}>{}</sub>", alias_attr, child_content)
         }
         SsmlElement::Prosody {
             rate,
@@ -202,15 +164,9 @@ fn to_ssml_element(element: &SsmlElement, indent: usize) -> String {
                 format!(" {}", attrs.join(" "))
             };
 
-            let child_content: String = children
-                .iter()
-                .map(|child| to_ssml_element(child, indent + 2))
-                .collect();
+            let child_content: String = children.iter().map(to_ssml_element).collect();
 
-            format!(
-                "{}<prosody{}>\n{}{}</prosody>\n",
-                spaces, attr_str, child_content, spaces
-            )
+            format!("<prosody{}>{}</prosody>", attr_str, child_content)
         }
         SsmlElement::Emphasis { level, children } => {
             let level_attr = if level.is_empty() {
@@ -219,15 +175,9 @@ fn to_ssml_element(element: &SsmlElement, indent: usize) -> String {
                 format!(" level=\"{}\"", escape(level))
             };
 
-            let child_content: String = children
-                .iter()
-                .map(|child| to_ssml_element(child, indent + 2))
-                .collect();
+            let child_content: String = children.iter().map(to_ssml_element).collect();
 
-            format!(
-                "{}<emphasis{}>\n{}{}</emphasis>\n",
-                spaces, level_attr, child_content, spaces
-            )
+            format!("<emphasis{}>{}</emphasis>", level_attr, child_content)
         }
         SsmlElement::Break { time, strength } => {
             let mut attrs = Vec::new();
@@ -244,52 +194,33 @@ fn to_ssml_element(element: &SsmlElement, indent: usize) -> String {
                 format!(" {}", attrs.join(" "))
             };
 
-            format!("{}<break{}/>\n", spaces, attr_str)
+            format!("<break{}/>", attr_str)
         }
         SsmlElement::Mark { name } => {
-            format!("{}<mark name=\"{}\"/>\n", spaces, escape(name))
+            format!("<mark name=\"{}\"/>", escape(name))
         }
         SsmlElement::Audio { src, children } => {
-            let child_content: String = children
-                .iter()
-                .map(|child| to_ssml_element(child, indent + 2))
-                .collect();
+            let child_content: String = children.iter().map(to_ssml_element).collect();
 
-            format!(
-                "{}<audio src=\"{}\">\n{}{}</audio>\n",
-                spaces,
-                escape(src),
-                child_content,
-                spaces
-            )
+            format!("<audio src=\"{}\">{}</audio>", escape(src), child_content,)
         }
         SsmlElement::Desc { children } => {
-            let child_content: String = children
-                .iter()
-                .map(|child| to_ssml_element(child, indent + 2))
-                .collect();
+            let child_content: String = children.iter().map(to_ssml_element).collect();
 
-            format!("{}<desc>\n{}{}</desc>\n", spaces, child_content, spaces)
+            format!("<desc>{}</desc>", child_content)
         }
         SsmlElement::LexiconUri { uri } => {
-            format!("{}<lexicon uri=\"{}\"/>\n", spaces, escape(uri))
+            format!("<lexicon uri=\"{}\"/>", escape(uri))
         }
         SsmlElement::Lang { xml_lang, children } => {
-            let child_content: String = children
-                .iter()
-                .map(|child| to_ssml_element(child, indent + 2))
-                .collect();
+            let child_content: String = children.iter().map(to_ssml_element).collect();
 
             format!(
-                "{}<lang xml:lang=\"{}\">\n{}{}</lang>\n",
-                spaces,
+                "<lang xml:lang=\"{}\">{}</lang>",
                 escape(xml_lang),
                 child_content,
-                spaces
             )
         }
-        SsmlElement::Text(text) => {
-            format!("{}{}\n", spaces, escape(text))
-        }
+        SsmlElement::Text(text) => escape(text),
     }
 }

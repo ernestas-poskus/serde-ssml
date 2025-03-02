@@ -530,6 +530,7 @@ fn ssml_parser() -> impl Parser<char, SSML, Error = Simple<char>> {
                 attrs_map
             })
             .then_ignore(just("/>"))
+            .padded()
     };
 
     // Text content parser
