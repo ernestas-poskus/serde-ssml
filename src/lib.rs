@@ -38,6 +38,8 @@ use std::{collections::HashMap, time::Duration};
 mod break_strength;
 mod ser;
 pub use break_strength::BreakStrength;
+mod functions;
+pub use functions::*;
 
 /// Represents the entire SSML document structure.
 ///
