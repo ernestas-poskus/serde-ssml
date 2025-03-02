@@ -1,6 +1,6 @@
 [package]
 name = "serde_ssml"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2024"
 authors = ["Ernestas Poskus @ernestas-poskus"]
 description = "A robust Rust library for parsing, manipulating, and generating Speech Synthesis Markup Language (SSML) documents."
