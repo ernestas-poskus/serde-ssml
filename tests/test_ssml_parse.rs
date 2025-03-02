@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use serde_ssml::{SsmlElement, from_str};
 
 #[test]
@@ -113,7 +115,7 @@ fn test_nested_elements() {
 
 #[test]
 fn test_self_closing() {
-    let input = "<speak>Test<break time=\"500ms\"/>continue</speak>";
+    let input = "<speak>Test<break time=\"381ms\"/>continue</speak>";
     let parsed = from_str(input);
     assert!(parsed.is_ok());
 
@@ -124,7 +126,7 @@ fn test_self_closing() {
             assert_eq!(children.len(), 3); // "Test", break, "continue"
 
             if let SsmlElement::Break { time, .. } = &children[1] {
-                assert_eq!(time, "500ms");
+                assert_eq!(time, &Some(Duration::from_millis(381)));
             } else {
                 panic!("Expected Break element");
             }
@@ -343,7 +345,11 @@ fn test_complex_ssml() {
                         .iter()
                         .find(|child| matches!(child, SsmlElement::Break { .. }))
                     {
-                        assert_eq!(time, "300ms", "Break element has wrong time attribute");
+                        assert_eq!(
+                            time,
+                            &Some(Duration::from_millis(300)),
+                            "Break element has wrong time attribute"
+                        );
                     }
                 }
             }

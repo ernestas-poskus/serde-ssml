@@ -181,8 +181,8 @@ fn to_ssml_element(element: &SsmlElement) -> String {
         }
         SsmlElement::Break { time, strength } => {
             let mut attrs = Vec::new();
-            if !time.is_empty() {
-                attrs.push(format!("time=\"{}\"", escape(time)));
+            if let Some(time) = time {
+                attrs.push(format!("time=\"{}ms\"", time.as_millis()));
             }
             if let Some(s) = strength {
                 attrs.push(format!("strength=\"{}\"", escape(&s.to_string())));

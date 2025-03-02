@@ -16,6 +16,7 @@ categories = ["parsing", "text-processing", "development-tools"]
 [dependencies]
 chumsky = { version = "0.9.3" }
 serde = { version = "1", features = ["derive"] }
+duration-str = { version = "0.13", features = [], default-features = false }
 
 [dev-dependencies]
 serde_json = "1"

@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use serde_ssml::{BreakStrength, SsmlElement};
 
 #[test]
@@ -55,7 +57,7 @@ fn test_serialize_complex_ssml() {
                 }],
             },
             SsmlElement::Break {
-                time: "500ms".to_string(),
+                time: Some(Duration::from_millis(500)),
                 strength: Some(BreakStrength::Strong),
             },
         ],

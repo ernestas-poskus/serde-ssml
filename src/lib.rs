@@ -32,7 +32,7 @@
 
 use chumsky::prelude::*;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::{collections::HashMap, time::Duration};
 
 mod break_strength;
 mod ser;
@@ -154,6 +154,7 @@ pub struct SSML {
 /// ```rust
 /// use serde_ssml::SsmlElement;
 /// use serde_ssml::BreakStrength;
+/// use std::time::Duration;
 ///
 /// // Creating a complex SSML structure demonstrating various elements
 /// let speak_element = SsmlElement::Speak {
@@ -187,7 +188,7 @@ pub struct SSML {
 ///             ]
 ///         },
 ///         SsmlElement::Break {
-///             time: "500ms".to_string(),
+///             time: Some(Duration::from_millis(500)),
 ///             strength: Some(BreakStrength::Medium)
 ///         }
 ///     ]
@@ -394,7 +395,7 @@ pub enum SsmlElement {
         /// # Examples
         /// - "500ms"
         /// - "1s"
-        time: String,
+        time: Option<Duration>,
 
         /// Relative strength of the break.
         ///
@@ -652,13 +653,13 @@ fn ssml_parser() -> impl Parser<char, SSML, Error = Simple<char>> {
 
         let break_element = self_close_tag("break")
             .map(|attrs| SsmlElement::Break {
-                time: attrs.get("time").cloned().unwrap_or_default(),
+                time: attrs.get("time").and_then(|t| duration_str::parse(t).ok()),
                 strength: attrs.get("strength").and_then(|s| s.parse().ok()),
             })
             .or(open_tag("break")
                 .then_ignore(close_tag("break"))
                 .map(|attrs| SsmlElement::Break {
-                    time: attrs.get("time").cloned().unwrap_or_default(),
+                    time: attrs.get("time").and_then(|t| duration_str::parse(t).ok()),
                     strength: attrs.get("strength").and_then(|s| s.parse().ok()),
                 }));
 
@@ -894,7 +895,7 @@ mod documentation_examples {
                         }],
                     },
                     SsmlElement::Break {
-                        time: "500ms".to_string(),
+                        time: Some(Duration::from_millis(500)),
                         strength: Some(BreakStrength::Medium),
                     },
                 ],
