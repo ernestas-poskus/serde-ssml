@@ -541,8 +541,19 @@ fn ssml_parser() -> impl Parser<char, SSML, Error = Simple<char>> {
         .map(|txt| txt.trim().to_string())
         .map(SsmlElement::Text);
 
+    // Parser for XML declaration
+    let xml_decl = just("<?xml")
+        .padded()
+        .ignore_then(
+            // Parse attributes like version="1.0"
+            attribute().padded().repeated(),
+        )
+        .then_ignore(just("?>").padded())
+        .ignored()
+        .padded();
+
     // Recursive parser for nested elements
-    recursive(|element| {
+    let ssml_parser = recursive(|element| {
         let speak_element = open_tag("speak")
             .then(element.clone().repeated())
             .then_ignore(close_tag("speak"))
@@ -692,7 +703,12 @@ fn ssml_parser() -> impl Parser<char, SSML, Error = Simple<char>> {
     })
     .repeated()
     .collect::<Vec<_>>()
-    .map(|elements| SSML { elements })
+    .map(|elements| SSML { elements });
+
+    xml_decl
+        .or_not()
+        .ignore_then(ssml_parser)
+        .then_ignore(end())
 }
 
 /// Parses a SSML (Speech Synthesis Markup Language) string into a structured representation.
@@ -759,7 +775,7 @@ fn ssml_parser() -> impl Parser<char, SSML, Error = Simple<char>> {
 /// let invalid_input = r#"<speak>Unclosed tag"#;
 /// let result = serde_ssml::from_str(invalid_input);
 ///
-/// assert!(result.is_ok());
+/// assert!(result.is_err());
 /// ```
 ///
 /// # Supported SSML Elements

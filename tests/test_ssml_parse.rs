@@ -15,6 +15,7 @@ fn test_simple_voice() {
 #[test]
 fn test_break() {
     let input = r#"
+<?xml version="1.0"?>
 <speak>
     <voice name="en-US">Hello</voice>
     <break time="500ms"/>
@@ -354,7 +355,7 @@ fn test_complex_ssml() {
 
 #[test]
 fn test_comprehensive_ssml2() {
-    let input = r#"<speak version="1.1"
+    let input = r#"<?xml version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"?><speak version="1.1"
        xmlns="http://www.w3.org/2001/10/synthesis"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.w3.org/2001/10/synthesis http://www.w3.org/TR/speech-synthesis/synthesis.xsd"

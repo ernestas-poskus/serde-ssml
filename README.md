@@ -40,6 +40,7 @@ use serde_ssml::{from_str, SsmlElement};
 
 fn main() {
     let ssml_input = r#"
+    <?xml version="1.0"?>
     <speak version="1.1" xml:lang="en-US">
         <p>
             <s>This is a <emphasis level="strong">test</emphasis> sentence.</s>
