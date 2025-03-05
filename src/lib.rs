@@ -715,6 +715,9 @@ fn ssml_parser() -> impl Parser<char, SSML, Error = Simple<char>> {
         .then_ignore(end())
 }
 
+/// Represents a parse error, containing a list of simple error tokens.
+pub type ParseError = Vec<Simple<char>>;
+
 /// Parses a SSML (Speech Synthesis Markup Language) string into a structured representation.
 ///
 /// # Arguments
@@ -806,7 +809,7 @@ fn ssml_parser() -> impl Parser<char, SSML, Error = Simple<char>> {
 ///
 /// - Does not validate against official SSML schemas
 /// - Parsing is based on structural recognition, not semantic validation
-pub fn from_str(input: impl AsRef<str>) -> Result<SSML, Vec<Simple<char>>> {
+pub fn from_str(input: impl AsRef<str>) -> Result<SSML, ParseError> {
     ssml_parser().parse(input.as_ref())
 }
 
