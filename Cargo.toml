@@ -13,7 +13,7 @@ keywords = ["ssml", "speech", "xml", "parsing", "text-to-speech"]
 categories = ["parsing", "text-processing", "development-tools"]
 
 [dependencies]
-chumsky = { version = "0.9.3" }
+chumsky = { version = "0.10.1" }
 serde = { version = "1", features = ["derive"] }
 duration-str = { version = "0.13", features = [], default-features = false }
 
